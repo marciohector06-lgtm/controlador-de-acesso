@@ -1,0 +1,14 @@
+{
+  "name": "controlador-acesso",
+  "version": "1.0.0",
+  "description": "Sistema de Controle de Acesso",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "express": "^4.22.1",
+    "node-rtsp-stream": "^0.0.9",
+    "ping": "^0.4.4"
+  }
+}

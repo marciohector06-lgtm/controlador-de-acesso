@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | Instituto Security</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Roboto', sans-serif; }
+        body {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .login-box {
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 15px 25px rgba(0,0,0,0.5);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+        .login-box h2 { margin-bottom: 20px; color: #333; }
+        .input-group { position: relative; margin-bottom: 20px; text-align: left; }
+        .input-group label { display: block; margin-bottom: 5px; color: #666; }
+        .input-group input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            outline: none;
+        }
+        .input-group input:focus { border-color: #1e3c72; }
+        button {
+            width: 100%;
+            padding: 12px;
+            background: #1e3c72;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        button:hover { background: #2a5298; }
+        .error-msg { color: red; font-size: 14px; margin-top: 10px; display: none; }
+        .logo { font-size: 50px; color: #1e3c72; margin-bottom: 10px; }
+    </style>
+</head>
+<body>
+
+    <div class="login-box">
+        <i class="fas fa-shield-alt logo"></i>
+        <h2>Acesso Restrito</h2>
+        
+        <div class="input-group">
+            <label>Usuário</label>
+            <input type="text" id="usuario" placeholder="Digite seu usuário">
+        </div>
+        
+        <div class="input-group">
+            <label>Senha</label>
+            <input type="password" id="senha" placeholder="Digite sua senha">
+        </div>
+
+        <button onclick="fazerLogin()">ENTRAR</button>
+        <p class="error-msg" id="msg-erro">Usuário ou senha incorretos!</p>
+    </div>
+
+    <script>
+        async function fazerLogin() {
+            const usuario = document.getElementById('usuario').value;
+            const senha = document.getElementById('senha').value;
+            const msgErro = document.getElementById('msg-erro');
+
+            if (!usuario || !senha) {
+                alert("Por favor, preencha todos os campos.");
+                return;
+            }
+
+            try {
+                // Manda os dados para o servidor (index.js) checar
+                const resposta = await fetch('/api/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ usuario, senha })
+                });
+
+                const dados = await resposta.json();
+
+                if (dados.sucesso) {
+                    // ✅ AQUI ESTÁ A MÁGICA: SALVA O NOME PARA USAR DEPOIS
+                    localStorage.setItem('usuarioNome', dados.nome || usuario);
+                    
+                    // Redireciona para o site principal
+                    window.location.href = 'index.html'; 
+                } else {
+                    msgErro.style.display = 'block';
+                }
+
+            } catch (erro) {
+                console.error("Erro no login:", erro);
+                alert("Erro ao conectar com o servidor.");
+            }
+        }
+
+        // Permitir dar Enter para entrar
+        document.addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') fazerLogin();
+        });
+    </script>
+
+</body>
+</html>
